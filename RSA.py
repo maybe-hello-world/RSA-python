@@ -85,7 +85,7 @@ def wide_evklid_help(e, n, x, y) -> (int, int, int):
 	if e == 0:
 		return n, 0, 1
 	d, x1, y1 = wide_evklid_help(n % e, e, x, y)
-	y1 = y1 - int(n / e) * x1
+	y1 = y1 - n // e * x1
 	return d, y1, x1
 
 
