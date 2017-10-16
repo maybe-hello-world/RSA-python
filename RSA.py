@@ -100,7 +100,7 @@ def calculate_D(E, eiler_f) -> int:
 	res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
 	return first_mul
 
-def ecnrypt(message: list, E: int, N: int) -> list:
+def encrypt(message: list, E: int, N: int) -> list:
 	"""
 	Encrypt your message with given public key
 
