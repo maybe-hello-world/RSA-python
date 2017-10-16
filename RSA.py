@@ -98,6 +98,8 @@ def calculate_D(E, eiler_f) -> int:
 	:param eiler_f: Eiler function value of N value
 	"""
 	res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
+	while(first_mul < 0):
+		res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
 	return first_mul
 
 def encrypt(message: list, E: int, N: int) -> list:
