@@ -77,6 +77,27 @@ def generate_RSA_system(length) -> (int, int, int):
 	D = calculate_D(E, eiler_f)
 	return (E, D, N)
 
+def wide_evklid_help(e, n, x, y) -> (int, int, int):
+    """
+    Internal function of wide Evklid algorithm
+    """
+    if e == 0:
+        return (n, 0, 1)
+    d, x1, y1 = wide_evklid_help(n % e, e, x, y)
+    return d, y1 - int(n / e) * x1, x1
+
+
+def calculate_D(E, eiler_f) -> int:
+    """
+    gets E and eiler_f and returns such D wich D*E mod eiler_f = 1
+    nod(D*E, eiler_f*some_unuserful_num) = 1 because d,e and eiler_f - mutually prime
+    with upper clause helps wide Evklid algorithm
+
+    :param E: E-key of RSA pair
+    :param eiler_f: Eiler function value of N value
+    """
+    res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
+    return first_mul
 
 def cypher(message: list, E, N) -> list:
 	"""
