@@ -86,8 +86,6 @@ def wide_evklid_help(e, n, x, y) -> (int, int, int):
 		return n, 0, 1
 	d, x1, y1 = wide_evklid_help(n % e, e, x, y)
 	y1 = y1 - int(n / e) * x1
-	if y1 < 0:
-		y1 = n + y1
 	return d, y1, x1
 
 
@@ -101,8 +99,8 @@ def calculate_D(E, eiler_f) -> int:
 	:param eiler_f: Eiler function value of N value
 	"""
 	res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
-	while(first_mul < 0):
-		res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
+	if first_mul < 0:
+		first_mul += eiler_f
 	return first_mul
 
 def encrypt(message: list, E: int, N: int) -> list:
