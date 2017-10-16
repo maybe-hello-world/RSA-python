@@ -4,7 +4,7 @@ Our own implementation of RSA algo
 
 import random
 
-def prime(num: int) -> int:
+def __prime(num: int) -> int:
 	"""
 	Generator of next simple number
 
@@ -21,7 +21,7 @@ def prime(num: int) -> int:
 		num += 1
 
 
-def get_prime_number_pair(length: int) -> (int, int):
+def __get_prime_number_pair(length: int) -> (int, int):
 	"""
 	Return pair of random prime numbers of given length (in bits)
 
@@ -32,12 +32,12 @@ def get_prime_number_pair(length: int) -> (int, int):
 	start = 1 << (length - 1)
 
 	while True:
-		first_prime = prime(start + int(random.random() * start))
+		first_prime = __prime(start + int(random.random() * start))
 		if first_prime.bit_length() == length:
 			break
 
 	while True:
-		second_prime = prime(start + int(random.random() * start))
+		second_prime = __prime(start + int(random.random() * start))
 		if second_prime.bit_length() == length:
 			break
 
@@ -53,7 +53,7 @@ def generate_RSA_system(length: int) -> (int, int, int):
 	"""
 
 	# Get pair of prime numbers
-	p_prime, q_prime = get_prime_number_pair(length)
+	p_prime, q_prime = __get_prime_number_pair(length)
 	N = p_prime * q_prime
 
 	# Calculate Eiler function of our primes
@@ -68,17 +68,17 @@ def generate_RSA_system(length: int) -> (int, int, int):
 		E = 17
 	else:
 		# If it's not coprime with Ferma's prime numbers then just use usual
-		num = prime(101)
+		num = __prime(101)
 		while eiler_f % num == 0:
-			num = prime(num + 1)
+			num = __prime(num + 1)
 		E = num
 
 	# Calculate D value
-	D = calculate_D(E, eiler_f)
+	D = __calculate_D(E, eiler_f)
 	return E, D, N
 
 
-def calculate_D(E, eiler_f) -> int:
+def __calculate_D(E, eiler_f) -> int:
 	"""
 	gets E and eiler_f and returns such D wich D*E mod eiler_f = 1
 	nod(D*E, eiler_f*some_unuserful_num) = 1 because d,e and eiler_f - mutually prime
@@ -103,6 +103,7 @@ def calculate_D(E, eiler_f) -> int:
 	if first_mul < 0:
 		first_mul += eiler_f
 	return first_mul
+
 
 def encrypt(message: list, E: int, N: int) -> list:
 	"""
