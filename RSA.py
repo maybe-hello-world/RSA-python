@@ -128,11 +128,9 @@ def decrypt(code: list, D: int, N: int) -> list:
 	:param N: Second part of private key
 	:return: List of decrypted numbers
 	"""
-	message = []
 
-	# Calculate c ** D mod N for each element
-	for element in code:
-		message.append(pow(element, D, N))
+	# Just similar algo with one another var
+	message = encrypt(code, D, N)
 
 	return message
 
