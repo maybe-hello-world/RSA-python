@@ -85,7 +85,10 @@ def wide_evklid_help(e, n, x, y) -> (int, int, int):
 	if e == 0:
 		return n, 0, 1
 	d, x1, y1 = wide_evklid_help(n % e, e, x, y)
-	return d, y1 - int(n / e) * x1, x1
+	y1 = y1 - int(n / e) * x1
+	if y1 < 0:
+		y1 = n + y1
+	return d, y1, x1
 
 
 def calculate_D(E, eiler_f) -> int:
