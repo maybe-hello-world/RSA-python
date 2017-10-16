@@ -11,6 +11,7 @@ def prime(num: int) -> int:
 	:param num: seed for prime search
 	:return: first prime number after seed
 	"""
+
 	while True:
 		for i in range(2, int(num ** 0.5) + 1):
 			if num % i == 0:
@@ -43,13 +44,12 @@ def get_prime_number_pair(length: int) -> (int, int):
 	return first_prime, second_prime
 
 
-def generate_RSA_system(length) -> (int, int, int):
+def generate_RSA_system(length: int) -> (int, int, int):
 	"""
-	:param length: Length (in bits) of prime numbers
+	Generates E, D, N values of RSA system. E and N - public part, D and N - private part
 
-	Returns E (public only part),
-	D (private only part),
-	N (public and private part)
+	:param length: desired length of numbers in bits (greater -> more secure and more slow)
+	:return: E, D, N values
 	"""
 
 	# Get pair of prime numbers
@@ -59,7 +59,7 @@ def generate_RSA_system(length) -> (int, int, int):
 	# Calculate Eiler function of our primes
 	eiler_f = (p_prime - 1) * (q_prime - 1)
 
-	# Choose E (coprime with eiler_f, usually Pherma's simple numbers, but what if it's not coprime with them all...?)
+	# Choose E (coprime with eiler_f, usually Ferma's simple numbers)
 	if eiler_f % 65537 != 0:
 		E = 65537
 	elif eiler_f % 257 != 0:
@@ -67,7 +67,7 @@ def generate_RSA_system(length) -> (int, int, int):
 	elif eiler_f % 17 != 0:
 		E = 17
 	else:
-		# If it's not coprime with Ferm's prime numbers then just use usual
+		# If it's not coprime with Ferma's prime numbers then just use usual
 		num = prime(101)
 		while eiler_f % num == 0:
 			num = prime(num + 1)
@@ -75,35 +75,41 @@ def generate_RSA_system(length) -> (int, int, int):
 
 	# Calculate D value
 	D = calculate_D(E, eiler_f)
-	return (E, D, N)
+	return E, D, N
+
 
 def wide_evklid_help(e, n, x, y) -> (int, int, int):
-    """
-    Internal function of wide Evklid algorithm
-    """
-    if e == 0:
-        return (n, 0, 1)
-    d, x1, y1 = wide_evklid_help(n % e, e, x, y)
-    return d, y1 - int(n / e) * x1, x1
+	"""
+	Internal function of wide Evklid algorithm
+	"""
+	if e == 0:
+		return n, 0, 1
+	d, x1, y1 = wide_evklid_help(n % e, e, x, y)
+	return d, y1 - int(n / e) * x1, x1
 
 
 def calculate_D(E, eiler_f) -> int:
-    """
-    gets E and eiler_f and returns such D wich D*E mod eiler_f = 1
-    nod(D*E, eiler_f*some_unuserful_num) = 1 because d,e and eiler_f - mutually prime
-    with upper clause helps wide Evklid algorithm
-
-    :param E: E-key of RSA pair
-    :param eiler_f: Eiler function value of N value
-    """
-    res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
-    return first_mul
-
-def cypher(message: list, E, N) -> list:
 	"""
-	message - list of numbers,
-	E and N - public key pair of RSA
+	gets E and eiler_f and returns such D wich D*E mod eiler_f = 1
+	nod(D*E, eiler_f*some_unuserful_num) = 1 because d,e and eiler_f - mutually prime
+	with upper clause helps wide Evklid algorithm
+
+	:param E: E-key of RSA pair
+	:param eiler_f: Eiler function value of N value
 	"""
+	res, first_mul, second_mul = wide_evklid_help(E, eiler_f, 0, 1)
+	return first_mul
+
+def ecnrypt(message: list, E: int, N: int) -> list:
+	"""
+	Encrypt your message with given public key
+
+	:param message: List of numbers representing a message
+	:param E: First part of public key
+	:param N: Second part of public key
+	:return: List of encrypted numbers
+	"""
+
 	code = []
 
 	# Calculate m ^ E mod N for each element
@@ -113,10 +119,14 @@ def cypher(message: list, E, N) -> list:
 	return code
 
 
-def decypher(code: list, D, N) -> list:
+def decrypt(code: list, D: int, N: int) -> list:
 	"""
-	code - list of numbers,
-	D and N - private key pair of RSA
+	Decrypt message with given private key
+
+	:param code: List of encoded numbers received from sender
+	:param D: First part of private key
+	:param N: Second part of private key
+	:return: List of decrypted numbers
 	"""
 	message = []
 
@@ -127,5 +137,4 @@ def decypher(code: list, D, N) -> list:
 	return message
 
 
-def calculate_D(E, eiler_f):
-	raise NotImplementedError
+
